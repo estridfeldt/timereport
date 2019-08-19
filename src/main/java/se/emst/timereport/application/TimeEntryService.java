@@ -2,19 +2,22 @@ package se.emst.timereport.application;
 
 import reactor.core.publisher.Mono;
 import se.emst.timereport.domain.TimeEntry;
+import se.emst.timereport.domain.TimeEntryRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TimeEntryService {
-    private final List<TimeEntry> entries = new ArrayList<>();
+    private final TimeEntryRepository timeEntryRepository;
+
+    public TimeEntryService(TimeEntryRepository timeEntryRepository) {
+        this.timeEntryRepository = timeEntryRepository;
+    }
 
     public void addEntry(TimeEntry timeEntry) {
-        entries.add(timeEntry);
-
+        timeEntryRepository.addEntry(timeEntry);
     }
 
     public Mono<List<TimeEntry>> getAllEntries() {
-        return Mono.just(entries);
+        return timeEntryRepository.findAll();
     }
 }

@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import se.emst.timereport.application.TimeEntryService;
+import se.emst.timereport.infrastructure.memory.InMemoryTimeEntryRepository;
 
 @SpringBootApplication
 public class TimeReportApplication {
@@ -14,6 +15,6 @@ public class TimeReportApplication {
 
     @Bean
     public TimeEntryService timeEntryService() {
-        return new TimeEntryService();
+        return new TimeEntryService(new InMemoryTimeEntryRepository());
     }
 }
