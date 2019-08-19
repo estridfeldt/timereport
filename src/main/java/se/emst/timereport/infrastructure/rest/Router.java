@@ -24,7 +24,8 @@ public class Router {
     @Bean
     RouterFunction routers() {
         return RouterFunctions.route(RequestPredicates.GET("/entries").and(accept(MediaType.APPLICATION_JSON_UTF8)), entryHandler::getEntries)
-                .andRoute(RequestPredicates.POST("/entries").and(accept(MediaType.APPLICATION_JSON_UTF8)), entryHandler::addEntry);
+                .andRoute(RequestPredicates.POST("/entries").and(accept(MediaType.APPLICATION_JSON_UTF8)), entryHandler::addEntry)
+                .andRoute(RequestPredicates.GET("/entries/{id}").and(accept(MediaType.APPLICATION_JSON_UTF8)), entryHandler::findOneEntry);
     }
 
 }

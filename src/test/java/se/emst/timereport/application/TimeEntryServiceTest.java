@@ -3,10 +3,11 @@ package se.emst.timereport.application;
 import org.junit.Before;
 import org.junit.Test;
 import reactor.core.publisher.Mono;
+import se.emst.timereport.domain.EntryId;
 import se.emst.timereport.domain.TimeEntry;
+import se.emst.timereport.domain.TimeEntryMother;
 import se.emst.timereport.domain.TimeEntryRepository;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class TimeEntryServiceTest {
     @Test
     public void shouldGetEntries() {
         //given
-        List<TimeEntry> expectedEntries = Collections.singletonList(new TimeEntry(new BigDecimal("5")));
+        List<TimeEntry> expectedEntries = Collections.singletonList(TimeEntryMother.defaultEntry());
 
         given(timeEntryRepository.findAll()).willReturn(Mono.just(expectedEntries));
 
@@ -44,12 +45,28 @@ public class TimeEntryServiceTest {
     @Test
     public void shouldAddOneEntry() {
         //given
-        TimeEntry timeEntry = new TimeEntry(new BigDecimal("6"));
+        TimeEntry expectedEntry = TimeEntryMother.defaultEntry();
+        AddTimeEntryRequest timeEntryRequest = new AddTimeEntryRequest(expectedEntry.getHours());
+        given(timeEntryRepository.addEntry(timeEntryRequest.toTimeEntry())).willReturn(Mono.just(expectedEntry));
 
         //when
-        timeEntryService.addEntry(timeEntry);
+        Mono<TimeEntry> timeEntry = timeEntryService.addEntry(timeEntryRequest);
 
         //then
-        verify(timeEntryRepository).addEntry(timeEntry);
+        assertThat(timeEntry.block()).isEqualTo(expectedEntry);
+    }
+
+    @Test
+    public void shouldFindOneEntry() {
+        //given
+        TimeEntry expectedEntry = TimeEntryMother.defaultEntry();
+        EntryId entryId = new EntryId("4");
+        given(timeEntryRepository.findOne(entryId)).willReturn(Mono.just(expectedEntry));
+
+        //when
+        Mono<TimeEntry> actualEntry = timeEntryService.findOneEntry(entryId);
+
+        //then
+        assertThat(actualEntry.block()).isEqualTo(expectedEntry);
     }
 }

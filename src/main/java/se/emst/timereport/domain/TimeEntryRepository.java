@@ -7,5 +7,7 @@ import java.util.List;
 public interface TimeEntryRepository {
     Mono<List<TimeEntry>> findAll();
 
-    void addEntry(TimeEntry timeEntry);
+    Mono<TimeEntry> addEntry(TimeEntry timeEntry);
+
+    Mono<TimeEntry> findOne(EntryId entryId);
 }

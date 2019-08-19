@@ -1,6 +1,7 @@
 package se.emst.timereport.application;
 
 import reactor.core.publisher.Mono;
+import se.emst.timereport.domain.EntryId;
 import se.emst.timereport.domain.TimeEntry;
 import se.emst.timereport.domain.TimeEntryRepository;
 
@@ -13,11 +14,16 @@ public class TimeEntryService {
         this.timeEntryRepository = timeEntryRepository;
     }
 
-    public void addEntry(TimeEntry timeEntry) {
-        timeEntryRepository.addEntry(timeEntry);
+    public Mono<TimeEntry> addEntry(AddTimeEntryRequest timeEntryRequest) {
+        TimeEntry timeEntry = timeEntryRequest.toTimeEntry();
+        return timeEntryRepository.addEntry(timeEntry);
     }
 
     public Mono<List<TimeEntry>> getAllEntries() {
         return timeEntryRepository.findAll();
+    }
+
+    public Mono<TimeEntry> findOneEntry(EntryId entryId) {
+        return timeEntryRepository.findOne(entryId);
     }
 }

@@ -1,18 +1,26 @@
 package se.emst.timereport;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
 import java.math.BigDecimal;
+import java.net.URI;
 import java.util.Collections;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -32,6 +40,7 @@ public class FunctionalTest {
         TimeReportEntry entry = new TimeReportEntry(new BigDecimal("8"));
 
         //when
+
         addOneEntry(entry);
 
         //then
@@ -39,13 +48,24 @@ public class FunctionalTest {
     }
 
     private void addOneEntry(TimeReportEntry entry) {
-        webTestClient.post().uri("/entries")
+        EntityExchangeResult<TimeReportEntry> result = webTestClient.post().uri("/entries")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .body(BodyInserters.fromObject(entry))
+                .exchange().expectStatus().isCreated()
+                .expectBody(TimeReportEntry.class)
+                .isEqualTo(entry)
+                .returnResult();
+
+        URI location = result.getResponseHeaders().getLocation();
+        EntityExchangeResult<TimeReportEntry> getOneResult = webTestClient.get().uri(location)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
                 .exchange()
-                .expectStatus()
-                .isCreated();
+                .expectStatus().isOk()
+                .expectBody(TimeReportEntry.class)
+                .isEqualTo(entry)
+                .returnResult();
+        assertThat(result.getResponseBody()).isEqualTo(getOneResult.getResponseBody());
     }
 
     private WebTestClient.BodyContentSpec getEntries() {
@@ -56,10 +76,11 @@ public class FunctionalTest {
                 .expectBody();
     }
 
-    private class TimeReportEntry {
+    private static class TimeReportEntry {
         private final BigDecimal hours;
 
-        TimeReportEntry(BigDecimal hours) {
+        @JsonCreator
+        TimeReportEntry(@JsonProperty("hours") BigDecimal hours) {
             this.hours = hours;
         }
 
@@ -73,6 +94,16 @@ public class FunctionalTest {
             return "TimeReportEntry{" +
                     "hours=" + hours +
                     '}';
+        }
+
+        @Override
+        public int hashCode() {
+            return HashCodeBuilder.reflectionHashCode(this);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return EqualsBuilder.reflectionEquals(this, obj);
         }
     }
 }
