@@ -2,6 +2,8 @@ package se.emst.timereport;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import se.emst.timereport.application.TimeEntryService;
 
 @SpringBootApplication
 public class TimeReportApplication {
@@ -10,4 +12,8 @@ public class TimeReportApplication {
         SpringApplication.run(TimeReportApplication.class, args);
     }
 
+    @Bean
+    public TimeEntryService timeEntryService() {
+        return new TimeEntryService();
+    }
 }
