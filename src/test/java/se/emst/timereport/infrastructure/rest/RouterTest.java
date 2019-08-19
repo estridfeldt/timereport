@@ -54,7 +54,7 @@ public class RouterTest {
     public void shouldAddOneEntry() {
         //given
         TimeEntry timeEntry = TimeEntryMother.defaultEntry();
-        AddTimeEntryRequest addTimeEntryRequest = new AddTimeEntryRequest(timeEntry.getHours());
+        AddTimeEntryRequest addTimeEntryRequest = new AddTimeEntryRequest(timeEntry.getHours(), timeEntry.getDate());
         given(timeEntryService.addEntry(addTimeEntryRequest)).willReturn(Mono.just(timeEntry));
 
         //when
@@ -66,8 +66,6 @@ public class RouterTest {
                 .expectStatus().isCreated()
                 .expectHeader().value("location", s -> assertThat(s).isEqualTo("/entries/" + timeEntry.getId().value()))
                 .expectBody(TimeEntry.class).isEqualTo(timeEntry);
-
-
     }
 
     @Test

@@ -18,6 +18,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 
 import java.math.BigDecimal;
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,7 +38,7 @@ public class FunctionalTest {
     @Test
     public void shouldAddOneEntry() throws JsonProcessingException {
         //given
-        TimeReportEntry entry = new TimeReportEntry(new BigDecimal("8"));
+        TimeReportEntry entry = new TimeReportEntry(new BigDecimal("8"), LocalDate.of(2013,2,10));
 
         //when
 
@@ -78,10 +79,12 @@ public class FunctionalTest {
 
     private static class TimeReportEntry {
         private final BigDecimal hours;
+        private final LocalDate date;
 
         @JsonCreator
-        TimeReportEntry(@JsonProperty("hours") BigDecimal hours) {
+        TimeReportEntry(@JsonProperty("hours") BigDecimal hours, @JsonProperty("date") LocalDate date) {
             this.hours = hours;
+            this.date = date;
         }
 
         @SuppressWarnings("unused")
@@ -89,10 +92,16 @@ public class FunctionalTest {
             return hours;
         }
 
+        @SuppressWarnings("unused")
+        public String getDate() {
+            return date.toString();
+        }
+
         @Override
         public String toString() {
             return "TimeReportEntry{" +
                     "hours=" + hours +
+                    ", date=" + date +
                     '}';
         }
 

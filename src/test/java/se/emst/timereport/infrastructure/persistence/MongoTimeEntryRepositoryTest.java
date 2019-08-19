@@ -10,6 +10,7 @@ import se.emst.timereport.domain.TimeEntry;
 import se.emst.timereport.domain.TimeEntryRepository;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,6 +21,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class MongoTimeEntryRepositoryTest {
 
+    private static final LocalDate A_DATE = LocalDate.of(2012, 11, 21);
+
     @Autowired
     private TimeEntryCrudRepository timeEntryCrudRepository;
 
@@ -27,7 +30,7 @@ public class MongoTimeEntryRepositoryTest {
     public void shouldGetNewlyCreatedEntry() {
         //given
         TimeEntryRepository repository = new MongoTimeEntryRepository(timeEntryCrudRepository);
-        TimeEntry createdEntry = repository.addEntry(new TimeEntry(BigDecimal.TEN, null)).block();
+        TimeEntry createdEntry = repository.addEntry(new TimeEntry(BigDecimal.TEN, null, A_DATE)).block();
 
         //when
         TimeEntry retrievedEntry = repository.findOne(createdEntry.getId()).block();
@@ -40,7 +43,7 @@ public class MongoTimeEntryRepositoryTest {
     public void shouldGetAllNewlyCreatedEntries() {
         //given
         TimeEntryRepository repository = new MongoTimeEntryRepository(timeEntryCrudRepository);
-        TimeEntry createdEntry = repository.addEntry(new TimeEntry(BigDecimal.TEN, null)).block();
+        TimeEntry createdEntry = repository.addEntry(new TimeEntry(BigDecimal.TEN, null, A_DATE)).block();
 
         //when
         List<TimeEntry> retrievedEntry = repository.findAll().block();

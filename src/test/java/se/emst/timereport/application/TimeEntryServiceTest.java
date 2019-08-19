@@ -46,7 +46,7 @@ public class TimeEntryServiceTest {
     public void shouldAddOneEntry() {
         //given
         TimeEntry expectedEntry = TimeEntryMother.defaultEntry();
-        AddTimeEntryRequest timeEntryRequest = new AddTimeEntryRequest(expectedEntry.getHours());
+        AddTimeEntryRequest timeEntryRequest = new AddTimeEntryRequest(expectedEntry.getHours(), expectedEntry.getDate());
         given(timeEntryRepository.addEntry(timeEntryRequest.toTimeEntry())).willReturn(Mono.just(expectedEntry));
 
         //when

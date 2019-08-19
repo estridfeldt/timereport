@@ -24,7 +24,7 @@ public class MongoTimeEntryRepository implements TimeEntryRepository {
 
     @Override
     public Mono<TimeEntry> addEntry(TimeEntry timeEntry) {
-        return timeEntryCrudRepository.save(new TimeDoc(timeEntry.getHours())).map(toTimeEntry());
+        return timeEntryCrudRepository.save(new TimeDoc(timeEntry.getHours(), timeEntry.getDate())).map(toTimeEntry());
     }
 
     @Override
@@ -33,6 +33,6 @@ public class MongoTimeEntryRepository implements TimeEntryRepository {
     }
 
     private Function<TimeDoc, TimeEntry> toTimeEntry() {
-        return timeDoc -> new TimeEntry(timeDoc.getHours(), new EntryId(timeDoc.getId()));
+        return timeDoc -> new TimeEntry(timeDoc.getHours(), new EntryId(timeDoc.getId()), timeDoc.getDate());
     }
 }

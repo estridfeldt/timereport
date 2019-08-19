@@ -7,21 +7,28 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import se.emst.timereport.domain.TimeEntry;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 public class AddTimeEntryRequest {
     private final BigDecimal hours;
+    private final LocalDate date;
 
     @JsonCreator
-    public AddTimeEntryRequest(@JsonProperty("hours") BigDecimal hours) {
+    public AddTimeEntryRequest(@JsonProperty("hours") BigDecimal hours, @JsonProperty("date") LocalDate date) {
         this.hours = hours;
+        this.date = date;
     }
 
     TimeEntry toTimeEntry() {
-        return new TimeEntry(hours, null);
+        return new TimeEntry(hours, null, date);
     }
 
     public BigDecimal getHours() {
         return hours;
+    }
+
+    public LocalDate getDate() {
+        return date;
     }
 
     @Override
