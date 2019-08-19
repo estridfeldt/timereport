@@ -4,7 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import se.emst.timereport.application.TimeEntryService;
-import se.emst.timereport.infrastructure.memory.InMemoryTimeEntryRepository;
+import se.emst.timereport.infrastructure.persistence.MongoTimeEntryRepository;
+import se.emst.timereport.infrastructure.persistence.TimeEntryCrudRepository;
 
 @SpringBootApplication
 public class TimeReportApplication {
@@ -14,7 +15,7 @@ public class TimeReportApplication {
     }
 
     @Bean
-    public TimeEntryService timeEntryService() {
-        return new TimeEntryService(new InMemoryTimeEntryRepository());
+    public TimeEntryService timeEntryService(TimeEntryCrudRepository timeEntryCrudRepository) {
+        return new TimeEntryService(new MongoTimeEntryRepository(timeEntryCrudRepository));
     }
 }
